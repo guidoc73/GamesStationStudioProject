@@ -2,7 +2,7 @@
 
 public class CharacterFactory : MonoBehaviour
 {
-    [SerializeField] private Character character;
+    [SerializeField] private CharacterView character;
 
     public void InstantiateCharacterInTheCenterOfTheScene()
     {
