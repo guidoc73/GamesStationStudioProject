@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class EventBus
 {
-    private static Dictionary<CustomEvents, Action> eventDictionary  = new Dictionary<CustomEvents, Action>();
+    private static Dictionary<CustomEvents, Action<bool>> eventDictionary  = new Dictionary<CustomEvents, Action<bool>>();
 
     private static EventBus eventBus;
 
@@ -11,7 +11,7 @@ public class EventBus
     {
         get
         {
-            if (eventBus != null)
+            if (eventBus == null)
             {
                 eventBus = new EventBus();
             }
@@ -20,9 +20,9 @@ public class EventBus
         }
     }
 
-    public static void Subscribe(CustomEvents eventName, Action listener)
+    public void Subscribe(CustomEvents eventName, Action<bool> listener)
     {
-        if (eventDictionary.TryGetValue(eventName, out Action thisEvent))
+        if (eventDictionary.TryGetValue(eventName, out Action<bool> thisEvent))
         {
             thisEvent += listener;
             eventDictionary[eventName] = thisEvent;
@@ -34,21 +34,20 @@ public class EventBus
         }
     }
 
-    public static void Unsubscribe(CustomEvents eventName, Action listener)
+    public void Unsubscribe(CustomEvents eventName, Action<bool> listener)
     {
-        if (eventDictionary.TryGetValue(eventName, out Action thisEvent))
+        if (eventDictionary.TryGetValue(eventName, out Action<bool> thisEvent))
         {
             thisEvent -= listener;
             eventDictionary[eventName] = thisEvent;
         }
     }
 
-    public static void TriggerEvent(CustomEvents eventName)
+    public void Publish(CustomEvents eventName, bool value)
     {
-        if (eventDictionary.TryGetValue(eventName, out Action thisEvent))
+        if (eventDictionary.TryGetValue(eventName, out Action<bool> thisEvent))
         {
-            thisEvent.Invoke();
-            
+            thisEvent.Invoke(value);
         }
     }
 }
