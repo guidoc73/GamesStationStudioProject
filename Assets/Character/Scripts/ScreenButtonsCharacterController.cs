@@ -1,18 +1,20 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class ScreenButtonsCharacterController : MonoBehaviour
 {
     private const int MAX_HORIZONTAL_VELOCITY = 8;
 
     [SerializeField] private Rigidbody2D _rb;
-    [SerializeField] private float speed;
-    [SerializeField] private float jumpforce;
+    [SerializeField] private CharacterView _view;
 
-    private bool IsWalkingLeft;
-    private bool IsWalkingRight;
-    private bool IsJumping;
-    private bool IsOnGround;
+    private CharacterModel _model;
 
+    private void OnEnable()
+    {
+        _model = new CharacterModel();
+        SubscribeEvents();
+    }
 
     private void FixedUpdate()
     {
@@ -21,23 +23,23 @@ public class ScreenButtonsCharacterController : MonoBehaviour
 
     public void SetOnGround(bool value)
     {
-        IsOnGround = value;
+        _model.SetOnGround(value);
     }
 
     private void MovingActions()
     {
-        if (IsOnGround)
-            if (IsWalkingLeft)
+        if (_model.IsOnGround)
+            if (_model.IsWalkingLeft)
             {
-                _rb.velocity += Vector2.left * speed;
+                _rb.velocity += Vector2.left * _model.MoveSpeed;
             }
-            else if (IsWalkingRight)
+            else if (_model.IsWalkingRight)
             {
-                _rb.velocity += Vector2.right * speed;
+                _rb.velocity += Vector2.right * _model.MoveSpeed;
             }
-            else if (IsJumping)
+            else if (_model.IsJumping)
             {
-                _rb.velocity += Vector2.up * jumpforce;
+                _rb.velocity += Vector2.up * _model.Jumpforce;
             }
 
         _rb.velocity = GetClampedHorizontalVelocity();
@@ -49,31 +51,27 @@ public class ScreenButtonsCharacterController : MonoBehaviour
         return new Vector2(clampedHorizontalVelocity, _rb.velocity.y);
     }
 
-    private void OnEnable()
-    {
-        SubscribeToEvents();
-    }
-    private void OnDestroy()
-    {
-        UnsubscribeToEvents();
-    }
 
-    private void SubscribeToEvents()
+    private void SubscribeEvents()
     {
         EventBus.Instance.Subscribe(CustomEvents.WALK_LEFT, SetWalkingLeft);
         EventBus.Instance.Subscribe(CustomEvents.WALK_RIGHT, SetWalkingRight);
         EventBus.Instance.Subscribe(CustomEvents.JUMP, SetJumping);
     }
 
-    private void UnsubscribeToEvents()
+    private void UnsubscribeEvents()
     {
         EventBus.Instance.Unsubscribe(CustomEvents.WALK_LEFT, SetWalkingLeft);
         EventBus.Instance.Unsubscribe(CustomEvents.WALK_RIGHT, SetWalkingRight);
         EventBus.Instance.Unsubscribe(CustomEvents.JUMP, SetJumping);
     }
 
-    private void SetWalkingLeft(bool value) => IsWalkingLeft = value;
-    private void SetWalkingRight(bool value) => IsWalkingRight = value;
-    private void SetJumping(bool value) => IsJumping = value;
+    private void SetWalkingLeft(bool value) => _model.SetWalkingLeft(value);
+    private void SetWalkingRight(bool value) => _model.SetWalkingRight(value);
+    private void SetJumping(bool value) => _model.SetJumping(value);
 
+    private void OnDestroy()
+    {
+        UnsubscribeEvents();
+    }
 }
