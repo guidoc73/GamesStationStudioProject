@@ -1,7 +1,11 @@
-﻿public class CharacterModel
+﻿using System;
+
+public class CharacterModel
 {
+    public Action<bool> OnJump;
+
     public float MoveSpeed { get; private set; } = 10;
-    public float Jumpforce { get; private set; } = 30;
+    public float Jumpforce { get; private set; } = 20;
 
     public bool IsWalkingLeft { get; private set; }
     public bool IsWalkingRight { get; private set; }
@@ -27,5 +31,6 @@
     public void SetOnGround(bool value)
     {
         IsOnGround = value;
+        OnJump?.Invoke(!value);
     }
 }

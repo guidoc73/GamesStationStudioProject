@@ -8,4 +8,9 @@ public class CharacterView : MonoBehaviour
     {
         animator.SetFloat("Velocity", value);
     }
+
+    public void SetJumpingAnimTrigger(bool value)
+    {
+        animator.SetBool("Jumping", value);
+    }
 }

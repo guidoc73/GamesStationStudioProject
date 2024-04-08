@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ScreenButtonsCharacterController : MonoBehaviour
 {
@@ -57,6 +56,7 @@ public class ScreenButtonsCharacterController : MonoBehaviour
         EventBus.Instance.Subscribe(CustomEvents.WALK_LEFT, SetWalkingLeft);
         EventBus.Instance.Subscribe(CustomEvents.WALK_RIGHT, SetWalkingRight);
         EventBus.Instance.Subscribe(CustomEvents.JUMP, SetJumping);
+        _model.OnJump += _view.SetJumpingAnimTrigger;
     }
 
     private void UnsubscribeEvents()
@@ -64,6 +64,7 @@ public class ScreenButtonsCharacterController : MonoBehaviour
         EventBus.Instance.Unsubscribe(CustomEvents.WALK_LEFT, SetWalkingLeft);
         EventBus.Instance.Unsubscribe(CustomEvents.WALK_RIGHT, SetWalkingRight);
         EventBus.Instance.Unsubscribe(CustomEvents.JUMP, SetJumping);
+        _model.OnJump -= _view.SetJumpingAnimTrigger;
     }
 
     private void SetWalkingLeft(bool value) => _model.SetWalkingLeft(value);
