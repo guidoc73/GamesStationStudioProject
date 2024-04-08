@@ -9,11 +9,11 @@
 
     public void StartAction()
     {
-        EventBus.Instance.Publish(customEvent, true);
+        EventBus<bool>.Instance.Publish(customEvent, true);
     }
 
     public void StopAction()
     {
-        EventBus.Instance.Publish(customEvent, false);
+        EventBus<bool>.Instance.Publish(customEvent, false);
     }
 }
