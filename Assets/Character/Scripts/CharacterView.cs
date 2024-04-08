@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class CharacterView : MonoBehaviour
 {
@@ -12,5 +13,10 @@ public class CharacterView : MonoBehaviour
     public void SetJumpingAnimTrigger(bool value)
     {
         animator.SetBool("Jumping", value);
+    }
+
+    internal void SetDeadTrigger()
+    {
+        animator.SetTrigger("Dead");
     }
 }
