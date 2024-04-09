@@ -89,12 +89,15 @@ public class ScreenButtonsCharacterController : MonoBehaviour
         EventBus<int>.Instance.Publish(CustomEvents.GETDAMAGE, newLifeAmount);
 
         if (_model.Lifes == 0)
+        {
             _model.SetDead(true);
+            EventBus<bool>.Instance.Publish(CustomEvents.DEAD, true);
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.collider.CompareTag("EvilSquare"))
+        if (collision.collider.CompareTag("EvilSquare"))
         {
             GetDamage();
         }
