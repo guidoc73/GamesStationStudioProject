@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class CharacterButtonView : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+public class ButtonView : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     [SerializeField] private CustomEvents _customEvent;
 

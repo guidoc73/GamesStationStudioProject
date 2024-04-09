@@ -4,5 +4,8 @@
     WALK_LEFT,
     JUMP,
     GETDAMAGE,
-    DEAD
+    DEAD,
+    PAUSE,
+    UNPAUSE,
+    RESTART
 }
