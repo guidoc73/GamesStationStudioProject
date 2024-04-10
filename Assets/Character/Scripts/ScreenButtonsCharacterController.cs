@@ -10,7 +10,7 @@ public class ScreenButtonsCharacterController : MonoBehaviour
 
     private CharacterModel _model;
 
-    private void OnEnable()
+    private void Start()
     {
         _model = new CharacterModel();
         EventBus.Instance.Publish<LifeChangedEvent>(_model.Lifes);

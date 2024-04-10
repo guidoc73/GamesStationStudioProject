@@ -3,7 +3,8 @@ public static class GameManagerModule
     public static void Init()
     {
         var eventBus = DependencyManager.Get<IEventBus>();
-        new GameManager(eventBus);
+        var characterFactory = DependencyManager.Get<ICharacterFactory>();
+        new GameManager(eventBus, characterFactory);
     }
 
     public static void Shutdown()

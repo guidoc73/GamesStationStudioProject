@@ -5,11 +5,17 @@ public class GameManager
 {
     private const int MAIN_SCENE = 0;
 
+    [SerializeField] private ICharacterFactory _characterFactory;
+
     private IEventBus _eventBus;
-    public GameManager(IEventBus eventBus)
+
+    public GameManager(IEventBus eventBus, ICharacterFactory characterFactory)
     {
         _eventBus = eventBus;
+        _characterFactory = characterFactory;
+
         SubscribeToGameEvents();
+        InstantiateCharacter();
     }
 
     ~GameManager()
@@ -31,8 +37,12 @@ public class GameManager
         _eventBus.Unsubscribe<RestartButtonPressedEvent>(RestartGame);
     }
 
+    private void InstantiateCharacter() => _characterFactory.InstantiateCharacterInTheCenterOfTheScene();
+
     private void PauseGame() => Time.timeScale = 0;
+
     private void ResumeGame() => Time.timeScale = 1;
+
     private void RestartGame()
     {
         ResumeGame();
@@ -41,5 +51,6 @@ public class GameManager
     }
 
     private void CleanEventBus() => _eventBus.UnsubscribeAll();
+
     private void ReloadLevel() => SceneManager.LoadScene(MAIN_SCENE);
 }
