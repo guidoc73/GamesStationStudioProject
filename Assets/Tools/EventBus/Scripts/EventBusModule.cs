@@ -2,7 +2,7 @@ public static class EventBusModule
 {
     public static void Init()
     {
-        DependencyManager.Set(new EventBus());
+        DependencyManager.Set<IEventBus>(new EventBus());
     }
 
     public static void Shutdown()

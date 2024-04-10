@@ -9,7 +9,7 @@ public class Application : MonoBehaviour
     [SerializeField] private ObjectPool _pool;
     [SerializeField] private EvilSquareManager _evilSquareManager;
 
-    private EventBus _eventBus;
+    private IEventBus _eventBus;
 
     void Start()
     {
@@ -23,7 +23,7 @@ public class Application : MonoBehaviour
     {
         InitModules();
 
-        _eventBus = DependencyManager.Get<EventBus>();
+        _eventBus = DependencyManager.Get<IEventBus>();
 
         _eventBus.Subscribe<PauseButtonPressedEvent>(PauseGame);
         _eventBus.Subscribe<ResumeButtonPressedEvent>(ResumeGame);
