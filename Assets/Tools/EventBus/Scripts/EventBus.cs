@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-public class EventBus
+public class EventBus : IEventBus
 {
     private static Dictionary<Type, Action<object>> eventDictionary = new Dictionary<Type, Action<object>>();
 
