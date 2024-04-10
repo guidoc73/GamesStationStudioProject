@@ -9,6 +9,8 @@ public class Application : MonoBehaviour
     [SerializeField] private ObjectPool _pool;
     [SerializeField] private EvilSquareManager _evilSquareManager;
 
+    private EventBus _eventBus;
+
     void Start()
     {
         InstantiateCharacter();
@@ -19,15 +21,23 @@ public class Application : MonoBehaviour
     }
     private void OnEnable()
     {
-        EventBus.Instance.Subscribe<PauseButtonPressedEvent>(PauseGame);
-        EventBus.Instance.Subscribe<ResumeButtonPressedEvent>(ResumeGame);
-        EventBus.Instance.Subscribe<RestartButtonPressedEvent>(RestartGame);
+        InitModules();
+
+        _eventBus = DependencyManager.Get<EventBus>();
+
+        _eventBus.Subscribe<PauseButtonPressedEvent>(PauseGame);
+        _eventBus.Subscribe<ResumeButtonPressedEvent>(ResumeGame);
+        _eventBus.Subscribe<RestartButtonPressedEvent>(RestartGame);
     }
+
+
     private void OnDisable()
     {
-        EventBus.Instance.Unsubscribe<PauseButtonPressedEvent>(PauseGame);
-        EventBus.Instance.Unsubscribe<ResumeButtonPressedEvent>(ResumeGame);
-        EventBus.Instance.Unsubscribe<RestartButtonPressedEvent>(RestartGame);
+        _eventBus.Unsubscribe<PauseButtonPressedEvent>(PauseGame);
+        _eventBus.Unsubscribe<ResumeButtonPressedEvent>(ResumeGame);
+        _eventBus.Unsubscribe<RestartButtonPressedEvent>(RestartGame);
+
+        ShutdownModules();
     }
 
     private void InstantiateCharacter()
@@ -47,7 +57,16 @@ public class Application : MonoBehaviour
     private void RestartGame()
     {
         Time.timeScale = 1;
-        EventBus.Instance.UnsubscribeAll();
+        _eventBus.UnsubscribeAll();
         SceneManager.LoadScene(MAIN_SCENE);
+    }
+    private void InitModules()
+    {
+        EventBusModule.Init();
+    }
+
+    private void ShutdownModules()
+    {
+        EventBusModule.Shutdown();
     }
 }
