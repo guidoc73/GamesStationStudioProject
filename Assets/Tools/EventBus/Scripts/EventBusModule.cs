@@ -7,6 +7,6 @@ public static class EventBusModule
 
     public static void Shutdown()
     {
-        DependencyManager.ClearAll();
+        DependencyManager.Clear<IEventBus>();
     }
 }
