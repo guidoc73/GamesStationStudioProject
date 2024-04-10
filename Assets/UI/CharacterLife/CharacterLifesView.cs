@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 
@@ -9,16 +8,18 @@ public class CharacterLifesView : MonoBehaviour
     // Start is called before the first frame update
     private void OnEnable()
     {
-        EventBus<int>.Instance.Subscribe(CustomEvents.GETDAMAGE, SetLifes);
+        EventBus.Instance.Subscribe<LifeChangedEvent>(SetLifes);
     }
-
-    private void SetLifes(int value)
-    {
-        _lifes.text = "Lifes: " + value;
-    }
-
     private void OnDisable()
     {
-        EventBus<int>.Instance.Unsubscribe(CustomEvents.GETDAMAGE, SetLifes);
+        EventBus.Instance.Unsubscribe<LifeChangedEvent>(SetLifes);
+    }
+
+    private void SetLifes(object currentLifes)
+    {
+        if (currentLifes is int value)
+        {
+            _lifes.text = "Lifes: " + value;
+        }
     }
 }

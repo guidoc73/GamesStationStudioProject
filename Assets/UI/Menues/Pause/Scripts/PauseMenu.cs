@@ -6,21 +6,21 @@ public class PauseMenu : MonoBehaviour
     // Start is called before the first frame update
     private void OnEnable()
     {
-        EventBus<bool>.Instance.Subscribe(CustomEvents.PAUSE, PauseGame);
-        EventBus<bool>.Instance.Subscribe(CustomEvents.UNPAUSE, UnpauseGame);
+        EventBus.Instance.Subscribe<PauseButtonPressedEvent>(PauseGame);
+        EventBus.Instance.Subscribe<ResumeButtonPressedEvent>(ResumeGame);
     }
 
     private void OnDisable()
     {
-        EventBus<bool>.Instance.Unsubscribe(CustomEvents.PAUSE, PauseGame);
-        EventBus<bool>.Instance.Unsubscribe(CustomEvents.UNPAUSE, UnpauseGame);
+        EventBus.Instance.Unsubscribe<PauseButtonPressedEvent>(PauseGame);
+        EventBus.Instance.Unsubscribe<ResumeButtonPressedEvent>(ResumeGame);
     }
 
-    private void PauseGame(bool obj)
+    private void PauseGame()
     {
         _content.SetActive(true);
     }
-    private void UnpauseGame(bool obj)
+    private void ResumeGame()
     {
         _content.SetActive(false);
     }

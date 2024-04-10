@@ -12,13 +12,14 @@ public class EvilSquareManager : MonoBehaviour
 
     private void OnEnable()
     {
-        EventBus<bool>.Instance.Subscribe(CustomEvents.DEAD, SetGameFinished);
+        EventBus.Instance.Subscribe<DeadEvent>(SetGameFinished);
+    }
+    private void OnDisable()
+    {
+        EventBus.Instance.Unsubscribe<DeadEvent>(SetGameFinished);
     }
 
-    private void SetGameFinished(bool value)
-    {
-        _gameFinished = value;
-    }
+    private void SetGameFinished() => _gameFinished = true;
 
     private void Start()
     {
@@ -46,10 +47,7 @@ public class EvilSquareManager : MonoBehaviour
         _pool = pool;
     }
 
-    private void OnDisable()
-    {
-        EventBus<bool>.Instance.Unsubscribe(CustomEvents.DEAD, SetGameFinished);
-    }
+
 
     private Vector2 GetRandomPosition() =>
         new Vector2Int((int)Random.Range(_boxCollider.bounds.min.x, _boxCollider.bounds.max.x), 5);

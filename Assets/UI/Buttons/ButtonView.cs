@@ -1,24 +1,16 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class ButtonView : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+public abstract class ButtonView : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-    [SerializeField] private CustomEvents _customEvent;
-
-    private ButtonController _controller;
+    protected ButtonController _controller;
 
     private void Start()
     {
-        _controller = new ButtonController(_customEvent);
+        _controller = new ButtonController();
     }
 
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        _controller.StartAction();
-    }
+    public abstract void OnPointerDown(PointerEventData eventData);
 
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        _controller.StopAction();
-    }
+    public abstract void OnPointerUp(PointerEventData eventData);
 }

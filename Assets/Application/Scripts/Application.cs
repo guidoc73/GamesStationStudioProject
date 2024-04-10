@@ -19,15 +19,15 @@ public class Application : MonoBehaviour
     }
     private void OnEnable()
     {
-        EventBus<bool>.Instance.Subscribe(CustomEvents.PAUSE, PauseGame);
-        EventBus<bool>.Instance.Subscribe(CustomEvents.UNPAUSE, UnpauseGame);
-        EventBus<bool>.Instance.Subscribe(CustomEvents.RESTART, RestartGame);
+        EventBus.Instance.Subscribe<PauseButtonPressedEvent>(PauseGame);
+        EventBus.Instance.Subscribe<ResumeButtonPressedEvent>(ResumeGame);
+        EventBus.Instance.Subscribe<RestartButtonPressedEvent>(RestartGame);
     }
     private void OnDisable()
     {
-        EventBus<bool>.Instance.Unsubscribe(CustomEvents.PAUSE, PauseGame);
-        EventBus<bool>.Instance.Unsubscribe(CustomEvents.UNPAUSE, UnpauseGame);
-        EventBus<bool>.Instance.Unsubscribe(CustomEvents.RESTART, RestartGame);
+        EventBus.Instance.Unsubscribe<PauseButtonPressedEvent>(PauseGame);
+        EventBus.Instance.Unsubscribe<ResumeButtonPressedEvent>(ResumeGame);
+        EventBus.Instance.Unsubscribe<RestartButtonPressedEvent>(RestartGame);
     }
 
     private void InstantiateCharacter()
@@ -35,18 +35,19 @@ public class Application : MonoBehaviour
         _characterFactory.InstantiateCharacterInTheCenterOfTheScene();
     }
 
-    private void PauseGame(bool value)
+    private void PauseGame()
     {
         Time.timeScale = 0 ;
     }
 
-    private void UnpauseGame(bool value)
+    private void ResumeGame()
     {
         Time.timeScale = 1;
     }
-    private void RestartGame(bool obj)
+    private void RestartGame()
     {
         Time.timeScale = 1;
+        EventBus.Instance.UnsubscribeAll();
         SceneManager.LoadScene(MAIN_SCENE);
     }
 }

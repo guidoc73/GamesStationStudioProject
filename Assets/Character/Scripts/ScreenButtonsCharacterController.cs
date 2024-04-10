@@ -13,8 +13,15 @@ public class ScreenButtonsCharacterController : MonoBehaviour
     private void OnEnable()
     {
         _model = new CharacterModel();
-        EventBus<int>.Instance.Publish(CustomEvents.GETDAMAGE, _model.Lifes);
+        EventBus.Instance.Publish<LifeChangedEvent>(_model.Lifes);
         SubscribeEvents();
+        BindViewToModelEvents();
+    }
+
+    private void OnDestroy()
+    {
+        UnsubscribeEvents();
+        UnbindViewToModelEvents();
     }
 
     private void FixedUpdate()
@@ -49,34 +56,55 @@ public class ScreenButtonsCharacterController : MonoBehaviour
         var clampedHorizontalVelocity = Mathf.Clamp(_rb.velocity.x, -MAX_HORIZONTAL_VELOCITY, MAX_HORIZONTAL_VELOCITY);
         return new Vector2(clampedHorizontalVelocity, _rb.velocity.y);
     }
+    private void SubscribeEvents()
+    {
+        EventBus.Instance.Subscribe<WalkRightButtonPressedEvent>(SetWalkingRight);
+        EventBus.Instance.Subscribe<WalkRightButtonReleasedEvent>(SetStopWalkingRight);
+
+        EventBus.Instance.Subscribe<WalkLeftButtonPressedEvent>(SetWalkingLeft);
+        EventBus.Instance.Subscribe<WalkLeftButtonReleasedEvent>(SetStopWalkingLeft);
+
+        EventBus.Instance.Subscribe<JumpButtonPressedEvent>(SetJumping);
+        EventBus.Instance.Subscribe<JumpButtonReleasedEvent>(SetStopJumping);
+    }
+
+    private void UnsubscribeEvents()
+    {
+        EventBus.Instance.Unsubscribe<WalkRightButtonPressedEvent>(SetWalkingRight);
+        EventBus.Instance.Unsubscribe<WalkRightButtonReleasedEvent>(SetStopWalkingRight);
+
+        EventBus.Instance.Unsubscribe<WalkLeftButtonPressedEvent>(SetWalkingLeft);
+        EventBus.Instance.Unsubscribe<WalkLeftButtonReleasedEvent>(SetStopWalkingLeft);
+
+        EventBus.Instance.Unsubscribe<JumpButtonPressedEvent>(SetJumping);
+        EventBus.Instance.Unsubscribe<JumpButtonReleasedEvent>(SetStopJumping);
+    }
 
     public void SetOnGround(bool value) => _model.SetOnGround(value);
     private bool IsDead() => _model.IsDead;
-    private void SetWalkingLeft(bool value) => _model.SetWalkingLeft(value);
-    private void SetWalkingRight(bool value) => _model.SetWalkingRight(value);
-    private void SetJumping(bool value) => _model.SetJumping(value);
 
-    private void OnDestroy()
+    private void SetWalkingRight() => _model.SetWalkingRight(true);
+    private void SetStopWalkingRight() => _model.SetWalkingRight(false);
+
+    private void SetWalkingLeft() => _model.SetWalkingLeft(true);
+    private void SetStopWalkingLeft() => _model.SetWalkingLeft(false);
+
+    private void SetJumping() => _model.SetJumping(true);
+    private void SetStopJumping() => _model.SetJumping(false);
+
+   
+    private void BindViewToModelEvents()
     {
-        UnsubscribeEvents();
-    }
-    private void SubscribeEvents()
-    {
-        EventBus<bool>.Instance.Subscribe(CustomEvents.WALK_LEFT, SetWalkingLeft);
-        EventBus<bool>.Instance.Subscribe(CustomEvents.WALK_RIGHT, SetWalkingRight);
-        EventBus<bool>.Instance.Subscribe(CustomEvents.JUMP, SetJumping);
         _model.OnJumpChanged += _view.SetJumpingAnimTrigger;
         _model.OnVelocityChanged += _view.SetVelocity;
         _model.OnDeadChanged += _view.SetDeadTrigger;
     }
-    private void UnsubscribeEvents()
+
+    private void UnbindViewToModelEvents()
     {
-        EventBus<bool>.Instance.Unsubscribe(CustomEvents.WALK_LEFT, SetWalkingLeft);
-        EventBus<bool>.Instance.Unsubscribe(CustomEvents.WALK_RIGHT, SetWalkingRight);
-        EventBus<bool>.Instance.Unsubscribe(CustomEvents.JUMP, SetJumping);
         _model.OnJumpChanged -= _view.SetJumpingAnimTrigger;
         _model.OnVelocityChanged -= _view.SetVelocity;
-        _model.OnDeadChanged += _view.SetDeadTrigger;
+        _model.OnDeadChanged -= _view.SetDeadTrigger;
     }
 
     private void GetDamage()
@@ -86,12 +114,13 @@ public class ScreenButtonsCharacterController : MonoBehaviour
         var newLifeAmount = _model.Lifes - DAMAGE_AMOUNT;
 
         _model.SetLifes(newLifeAmount);
-        EventBus<int>.Instance.Publish(CustomEvents.GETDAMAGE, newLifeAmount);
+        EventBus.Instance.Publish<GetDamageEvent>();
+        EventBus.Instance.Publish<LifeChangedEvent>(newLifeAmount);
 
         if (_model.Lifes == 0)
         {
             _model.SetDead(true);
-            EventBus<bool>.Instance.Publish(CustomEvents.DEAD, true);
+            EventBus.Instance.Publish<DeadEvent>();
         }
     }
 

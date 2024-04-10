@@ -1,19 +1,14 @@
-﻿public class ButtonController
+﻿using UnityEngine;
+
+public class ButtonController
 {
-    private CustomEvents customEvent;
-
-    public ButtonController(CustomEvents customEvent)
+    public void ButtonPressed<T>() where T : ICustomEvents
     {
-        this.customEvent = customEvent;
+        EventBus.Instance.Publish<T>();
     }
 
-    public void StartAction()
+    public void ButtonReleased<T>() where T : ICustomEvents
     {
-        EventBus<bool>.Instance.Publish(customEvent, true);
-    }
-
-    public void StopAction()
-    {
-        EventBus<bool>.Instance.Publish(customEvent, false);
+        EventBus.Instance.Publish<T>();
     }
 }

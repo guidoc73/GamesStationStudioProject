@@ -1,53 +1,91 @@
 using System;
 using System.Collections.Generic;
 
-public class EventBus<T>
+public class EventBus
 {
-    private static Dictionary<CustomEvents, Action<T>> eventDictionary  = new Dictionary<CustomEvents, Action<T>>();
+    private static Dictionary<Type, Action<object>> eventDictionary = new Dictionary<Type, Action<object>>();
 
-    private static EventBus<T> eventBus;
+    private static EventBus eventBus;
 
-    public static EventBus<T> Instance
+    public static EventBus Instance
     {
         get
         {
             if (eventBus == null)
             {
-                eventBus = new EventBus<T>();
+                eventBus = new EventBus();
             }
 
             return eventBus;
         }
     }
 
-    public void Subscribe(CustomEvents eventName, Action<T> listener)
+    public void Subscribe<T>(Action listener) where T : ICustomEvents
     {
-        if (eventDictionary.TryGetValue(eventName, out Action<T> thisEvent))
+        Action<object> voidListener = obj => listener();
+
+        if (eventDictionary.TryGetValue(typeof(T), out Action<object> thisEvent))
+        {
+            thisEvent += voidListener;
+            eventDictionary[typeof(T)] = thisEvent;
+        }
+        else
+        {
+            thisEvent += voidListener;
+            eventDictionary.Add(typeof(T), thisEvent);
+        }
+    }
+
+    public void Subscribe<T>(Action<object> listener) where T : ICustomEvents
+    {
+        if (eventDictionary.TryGetValue(typeof(T), out Action<object> thisEvent))
         {
             thisEvent += listener;
-            eventDictionary[eventName] = thisEvent;
+            eventDictionary[typeof(T)] = thisEvent;
         }
         else
         {
             thisEvent += listener;
-            eventDictionary.Add(eventName, thisEvent);
+            eventDictionary.Add(typeof(T), thisEvent);
         }
     }
 
-    public void Unsubscribe(CustomEvents eventName, Action<T> listener)
+    public void Unsubscribe<T>(Action listener) where T : ICustomEvents
     {
-        if (eventDictionary.TryGetValue(eventName, out Action<T> thisEvent))
+        Action<object> voidListener = obj => listener();
+
+        if (eventDictionary.TryGetValue(typeof(T), out Action<object> thisEvent))
+        {
+            thisEvent -= voidListener;
+            eventDictionary[typeof(T)] = thisEvent;
+        }
+    }
+
+    public void Unsubscribe<T>(Action<object> listener) where T : ICustomEvents
+    {
+        if (eventDictionary.TryGetValue(typeof(T), out Action<object> thisEvent))
         {
             thisEvent -= listener;
-            eventDictionary[eventName] = thisEvent;
+            eventDictionary[typeof(T)] = thisEvent;
         }
     }
 
-    public void Publish(CustomEvents eventName, T value)
+    public void Publish<T>() where T : ICustomEvents
     {
-        if (eventDictionary.TryGetValue(eventName, out Action<T> thisEvent))
+        Publish<T>(null);
+    }
+
+    public void Publish<T>(object eventData) where T : ICustomEvents
+    {
+        if (eventDictionary.TryGetValue(typeof(T), out Action<object> thisEvent))
         {
-            thisEvent.Invoke(value);
+            thisEvent.Invoke(eventData);
         }
+    }
+
+
+    public void UnsubscribeAll()
+    {
+        eventDictionary.Clear();
     }
 }
