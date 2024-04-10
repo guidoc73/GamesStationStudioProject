@@ -35,8 +35,11 @@ public class GameManager
     private void ResumeGame() => Time.timeScale = 1;
     private void RestartGame()
     {
-        Time.timeScale = 1;
-        _eventBus.UnsubscribeAll();
-        SceneManager.LoadScene(MAIN_SCENE);
+        ResumeGame();
+        CleanEventBus();
+        ReloadLevel();
     }
+
+    private void CleanEventBus() => _eventBus.UnsubscribeAll();
+    private void ReloadLevel() => SceneManager.LoadScene(MAIN_SCENE);
 }
