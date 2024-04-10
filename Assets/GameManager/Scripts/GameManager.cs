@@ -1,7 +1,7 @@
 ﻿using UnityEngine.SceneManagement;
 using UnityEngine;
 
-public class GameManager : IGameManager
+public class GameManager
 {
     private const int MAIN_SCENE = 0;
 
