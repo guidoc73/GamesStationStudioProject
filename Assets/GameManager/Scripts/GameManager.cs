@@ -5,9 +5,8 @@ public class GameManager
 {
     private const int MAIN_SCENE = 0;
 
-    [SerializeField] private ICharacterFactory _characterFactory;
-
     private IEventBus _eventBus;
+    private ICharacterFactory _characterFactory;
 
     public GameManager(IEventBus eventBus, ICharacterFactory characterFactory)
     {
