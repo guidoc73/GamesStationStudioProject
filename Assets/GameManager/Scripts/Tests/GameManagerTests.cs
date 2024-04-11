@@ -1,5 +1,6 @@
 using NSubstitute;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 using System;
 
 public class GameManagerTests
@@ -23,13 +24,21 @@ public class GameManagerTests
 
         ThenItSubscribesToEvent<PauseButtonPressedEvent>();
     }
-    [Test]
 
+    [Test]
     public void SubscribeToResumeButtomPressedEventOnCreated()
     {
         WhenCreateGameManager();
 
         ThenItSubscribesToEvent<ResumeButtonPressedEvent>();
+    }
+
+    [Test]
+    public void SubscribeToRestartButtomPressedEventOnCreated()
+    {
+        WhenCreateGameManager();
+
+        ThenItSubscribesToEvent<RestartButtonPressedEvent>();
     }
 
     private void WhenCreateGameManager()
